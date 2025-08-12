@@ -1,0 +1,222 @@
+//1
+#include <iostream>
+#include <vector>
+#include <set>
+
+using namespace std;
+
+bool isReflexive(const set<int>& elements, const set<pair<int, int>>& relation) {
+    for (int e : elements) {
+        if (relation.find({e, e}) == relation.end()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool isSymmetric(const set<pair<int, int>>& relation) {
+    for (auto p : relation) {
+        if (relation.find({p.second, p.first}) == relation.end()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool isAntisymmetric(const set<pair<int, int>>& relation) {
+    for (auto p : relation) {
+        if (p.first != p.second && relation.find({p.second, p.first}) != relation.end()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool isTransitive(const set<pair<int, int>>& relation) {
+    for (auto p1 : relation) {
+        for (auto p2 : relation) {
+            if (p1.second == p2.first) {
+                if (relation.find({p1.first, p2.second}) == relation.end()) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+int main() {
+    
+    set<int> elements = {1, 2, 3};
+
+   
+    set<pair<int, int>> relation = {
+        {1, 1}, {2, 2}, {3, 3}, 
+        {1, 2}, {2, 1},         
+        {2, 3}, {3, 3}          
+    };
+
+    cout << "Reflexive: " << (isReflexive(elements, relation) ? "Yes" : "No") << endl;
+    cout << "Symmetric: " << (isSymmetric(relation) ? "Yes" : "No") << endl;
+    cout << "Antisymmetric: " << (isAntisymmetric(relation) ? "Yes" : "No") << endl;
+    cout << "Transitive: " << (isTransitive(relation) ? "Yes" : "No") << endl;
+
+    return 0;
+}
+//2
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <climits>
+
+using namespace std;
+
+typedef pair<int, int> pii;  // pair<distance, vertex>
+
+void dijkstra(int source, const vector<vector<pii>>& graph) {
+    int n = graph.size();
+    vector<int> dist(n, INT_MAX);
+    dist[source] = 0;
+
+   
+    priority_queue<pii, vector<pii>, greater<pii>> pq;
+    pq.push({0, source});
+
+    while (!pq.empty()) {
+        int currDist = pq.top().first;
+        int u = pq.top().second;
+        pq.pop();
+
+        if (currDist > dist[u]) continue;  // Skip outdated pair
+
+        for (auto edge : graph[u]) {
+            int v = edge.first;
+            int weight = edge.second;
+
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+
+ 
+    cout << "Vertex\tDistance from Source " << source << endl;
+    for (int i = 0; i < n; i++) {
+        if (dist[i] == INT_MAX) {
+            cout << i << "\t" << "INF" << endl;
+        } else {
+            cout << i << "\t" << dist[i] << endl;
+        }
+    }
+}
+
+int main() {
+    int vertices = 5;
+
+    vector<vector<pii>> graph(vertices);
+
+
+    graph[0].push_back({1, 9});
+    graph[0].push_back({2, 6});
+    graph[0].push_back({3, 5});
+    graph[0].push_back({4, 3});
+
+    graph[2].push_back({1, 2});
+    graph[2].push_back({3, 4});
+
+
+    int source = 0;
+    dijkstra(source, graph);
+
+    return 0;
+}
+
+//3
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Edge {
+    int u, v, weight;
+    bool operator<(const Edge& other) const {
+        return weight < other.weight;
+    }
+};
+
+
+class DSU {
+    vector<int> parent, rank;
+public:
+    DSU(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; i++)
+            parent[i] = i;
+    }
+
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]); 
+        return parent[x];
+    }
+
+    bool unite(int a, int b) {
+        int rootA = find(a);
+        int rootB = find(b);
+        if (rootA == rootB) return false;
+
+        
+        if (rank[rootA] < rank[rootB])
+            parent[rootA] = rootB;
+        else if (rank[rootB] < rank[rootA])
+            parent[rootB] = rootA;
+        else {
+            parent[rootB] = rootA;
+            rank[rootA]++;
+        }
+        return true;
+    }
+};
+
+int main() {
+    int V, E;
+    cout << "Enter number of vertices and edges: ";
+    cin >> V >> E;
+
+    vector<Edge> edges(E);
+    cout << "Enter edges (u v weight):\n";
+    for (int i = 0; i < E; i++) {
+        cin >> edges[i].u >> edges[i].v >> edges[i].weight;
+    }
+
+
+    sort(edges.begin(), edges.end());
+
+    DSU dsu(V);
+    vector<Edge> mst;
+    int mst_weight = 0;
+
+    for (auto& edge : edges) {
+        if (dsu.unite(edge.u, edge.v)) {
+            mst.push_back(edge);
+            mst_weight += edge.weight;
+        }
+    }
+
+    cout << "Edges in the Minimum Spanning Tree:\n";
+    for (auto& edge : mst) {
+        cout << edge.u << " - " << edge.v << " : " << edge.weight << "\n";
+    }
+
+    cout << "Total weight of MST: " << mst_weight << "\n";
+
+    return 0;
+}
+
+
+
+
+
