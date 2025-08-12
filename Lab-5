@@ -1,0 +1,94 @@
+include<iostream>
+#include<algorithm>
+using namespace std;
+int main ()
+{
+	string s;
+	cout<<"Enter a string:";
+	cin>>s;
+	if(next_permutation(s.begin(),s.end())) {
+		
+	
+	cout<<"Next permutation:"<<s<<endl;
+}else{
+	cout<<"No next permutation(already largest)."<<endl;
+}
+return  0;
+}
+
+QUESTION-2
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int main()
+{
+	int n,r;
+	cout<<"Enter the total element(n):";
+	cin>>n;
+	cout<<"Enter number to choose(r):";
+	cin>>r;
+	
+	vector<int> a (n);
+	cout<<"Enter "<<n <<"elements in increasing order:\n";
+	for(int i=0;i<n;++i)
+	cin>>a[i];
+	
+	vector <bool> mask(n);
+	fill(mask.begin(),mask.begin()+r,true); //first element=true
+	
+	
+	//First combination
+	do{
+		for(int i=0;i<n;++i)
+		if(mask[i])
+		cout<<a[i]<< " ";
+		cout<<endl;
+	} while 
+	(prev_permutation(mask.begin(),mask.end()));
+	return 0;
+}
+
+QUESTION-3
+#include<iostream>
+#include<cstdlib>
+using namespace std;
+
+// Fast modular exponentiation
+long long power(long long a, long long b, long long mod) {
+    long long res = 1;
+    a %= mod;
+    while (b > 0) {
+        if (b % 2 == 1)
+            res = (res * a) % mod;
+        a = (a * a) % mod;
+        b /= 2;
+    }
+    return res;
+}
+
+// Fermat Primality Test
+bool isPrime(int n, int k = 5) {
+    if (n <= 1 || n == 4) return false;
+    if (n <= 3) return true;
+
+    for (int i = 0; i < k; i++) {
+        int a = 2 + rand() % (n - 4);
+        if (power(a, n - 1, n) != 1)
+            return false;
+    }
+    return true;
+}
+
+int main() {
+    int n;
+    cout << "Enter a number: ";
+    cin >> n;
+
+    if (isPrime(n))
+        cout << n << " is probably prime." << endl;
+    else
+        cout << n << " is composite." << endl;
+
+    return 0;
+}
