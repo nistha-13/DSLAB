@@ -1,0 +1,193 @@
+Q1
+/1
+#include <iostream>
+#include <set>
+#include <algorithm>
+using namespace std;
+
+// Function to read a set
+void readSet(set<int>& s, const string& name) {
+    int n, val;
+    cout << "Enter number of elements in Set " << name << ": ";
+    cin >> n;
+    cout << "Enter elements of Set " << name << ": ";
+    for (int i = 0; i < n; ++i) {
+        cin >> val;
+        s.insert(val); // Set ensures uniqueness
+    }
+}
+
+// Function to print a set
+void printSet(const set<int>& s, const string& label) {
+    cout << label << ": { ";
+    for (int x : s)
+        cout << x << " ";
+    cout << "}\n";
+}
+
+int main() {
+    set<int> A, B;
+    readSet(A, "A");
+    readSet(B, "B");
+
+    // Union
+    set<int> unionSet;
+    set_union(A.begin(), A.end(), B.begin(), B.end(), inserter(unionSet, unionSet.begin()));
+    printSet(unionSet, "A ∪ B (Union)");
+
+    // Intersection
+    set<int> intersectionSet;
+    set_intersection(A.begin(), A.end(), B.begin(), B.end(), inserter(intersectionSet, intersectionSet.begin()));
+    printSet(intersectionSet, "A ∩ B (Intersection)");
+
+    // Difference A - B
+    set<int> diffAB;
+    set_difference(A.begin(), A.end(), B.begin(), B.end(), inserter(diffAB, diffAB.begin()));
+    printSet(diffAB, "A - B (Difference)");
+
+    // Difference B - A
+    set<int> diffBA;
+    set_difference(B.begin(), B.end(), A.begin(), A.end(), inserter(diffBA, diffBA.begin()));
+    printSet(diffBA, "B - A (Difference)");
+
+    // Symmetric Difference (A △ B)
+    set<int> symDiff;
+    set_symmetric_difference(A.begin(), A.end(), B.begin(), B.end(), inserter(symDiff, symDiff.begin()));
+    printSet(symDiff, "A △ B (Symmetric Difference)");
+
+    return 0;
+}
+//2
+#include <iostream>
+#include <vector>
+using namespace std;
+void cartesianProduct(const vector<vector<int>>& sets, vector<int>& current, int depth) {
+    if (depth == sets.size()) {
+        // Print current tuple
+        cout << "(";
+        for (int i = 0; i < current.size(); ++i) {
+            cout << current[i];
+            if (i != current.size() - 1)
+                cout << ", ";
+        }
+        cout << ")\n";
+        return;
+    }
+
+    for (int elem : sets[depth]) {
+        current[depth] = elem;
+        cartesianProduct(sets, current, depth + 1);
+    }
+}
+
+int main() {
+    int numSets;
+    cout << "Enter number of sets (2 or more): ";
+    cin >> numSets;
+    if (numSets < 2) {
+        cout << "Need at least two sets for Cartesian product.\n";
+        return 1;
+    }
+
+    vector<vector<int>> sets(numSets);
+    for (int i = 0; i < numSets; ++i) {
+        int n;
+        cout << "Enter number of elements in set " << i + 1 << ": ";
+        cin >> n;
+        cout << "Enter elements of set " << i + 1 << ": ";
+        sets[i].resize(n);
+        for (int j = 0; j < n; ++j) {
+            cin >> sets[i][j];
+        }
+    }
+
+    cout << "\nCartesian Product:\n";
+    vector<int> current(numSets);
+    cartesianProduct(sets, current, 0);
+
+    return 0;
+}
+//3
+#include <iostream>
+#include <cmath>  
+using namespace std;
+
+int main() {
+    double num;
+    cout << "Enter a real number: ";
+    cin >> num;
+
+    int floorVal = floor(num);
+    int ceilVal = ceil(num);
+
+    cout << "Floor value: " << floorVal << endl;
+    cout << "Ceiling value: " << ceilVal << endl;
+
+    return 0;
+}
+//4
+#include <iostream>
+#include <string>
+#include <vector>
+#include <iomanip>
+using namespace std;
+
+struct Person {
+    string name;
+    int age;
+    double muA; // membership degree in set A
+    double muB; // membership degree in set B
+};
+
+double membershipA(int age) {
+    if (age <= 20) return 1.0;
+    else if (age > 20 && age <= 30) return (30.0 - age) / 10.0;
+    else return 0.0;
+}
+
+double membershipB(int age) {
+    if (age <= 15) return 1.0;
+    else if (age > 15 && age <= 35) return (35.0 - age) / 20.0;
+    else return 0.0;
+}
+
+int main() {
+    vector<Person> people(5);
+    cout << fixed << setprecision(2);
+
+   
+    for (int i = 0; i < 5; ++i) {
+        cout << "Enter name of person " << i + 1 << ": ";
+        cin >> people[i].name;
+        cout << "Enter age of " << people[i].name << ": ";
+        cin >> people[i].age;
+
+        
+        people[i].muA = membershipA(people[i].age);
+        people[i].muB = membershipB(people[i].age);
+    }
+
+ 
+    cout << "\nPerson\tAge\tmuA\tmuB\n";
+    for (auto& p : people) {
+        cout << p.name << "\t" << p.age << "\t" << p.muA << "\t" << p.muB << "\n";
+    }
+
+    
+    cout << "\nFuzzy Set Operations:\n";
+    cout << "Person\tUnion\tIntersection\tDifference (A - B)\n";
+
+    for (auto& p : people) {
+        double fuzzyUnion = max(p.muA, p.muB);
+        double fuzzyIntersection = min(p.muA, p.muB);
+        double fuzzyDifference = p.muA - p.muB;
+        if (fuzzyDifference < 0) fuzzyDifference = 0;
+
+        cout << p.name << "\t"
+             << fuzzyUnion << "\t"
+             << fuzzyIntersection << "\t\t"
+             << fuzzyDifference << "\n";
+    }
+
+    return 0;
+}
