@@ -1,0 +1,179 @@
+//1
+#include <iostream>
+using namespace std;
+
+
+char tf(bool val) {
+    return val ? 'T' : 'F';
+}
+
+int main() {
+    bool p, q, r;
+
+    cout << "p q r | ¬q ¬p | (p∧¬q) | (p∧¬q∨r) | (¬p∨r) | → | ↔" << endl;
+    cout << "----------------------------------------------------" << endl;
+
+    for (int i = 0; i < 8; i++) {
+  
+        p = i & 4;
+        q = i & 2;
+        r = i & 1;
+
+        bool not_q = !q;
+        bool not_p = !p;
+        bool p_and_not_q = p && not_q;
+        bool lhs = p_and_not_q || r;
+        bool rhs = not_p || r;
+        bool implication = (!lhs) || rhs;  
+        bool biconditional = (lhs == rhs); 
+
+       
+        cout << tf(p) << " " << tf(q) << " " << tf(r) << " |  "
+             << tf(not_q) << "  " << tf(not_p) << "  |    "
+             << tf(p_and_not_q) << "    |     "
+             << tf(lhs) << "     |   "
+             << tf(rhs) << "   | "
+             << tf(implication) << " | "
+             << tf(biconditional) << endl;
+    }
+
+    return 0;
+}
+//2
+#include <iostream>
+using namespace std;
+
+
+char tf(bool val) {
+    return val ? 'T' : 'F';
+}
+
+int main() {
+    bool p, q;
+
+    cout << "p q | p->q ¬q ¬p | Premises true? Conclusion true?" << endl;
+    cout << "----------------------------------------" << endl;
+
+    bool valid = true; 
+
+    for (int i = 0; i < 4; i++) {
+        p = i & 2;
+        q = i & 1; 
+
+        bool p_implies_q = (!p) || q;
+        bool not_q = !q;
+        bool not_p = !p;
+
+    
+        bool premises_true = p_implies_q && not_q;
+
+       
+        if (premises_true && !not_p) {
+            valid = false;
+        }
+
+        cout << tf(p) << " " << tf(q) << " |   "
+             << tf(p_implies_q) << "  " << tf(not_q) << "  " << tf(not_p) << " |       "
+             << tf(premises_true) << "          " << tf(not_p) << endl;
+    }
+
+    cout << "\nThe argument is " << (valid ? "valid." : "invalid.") << endl;
+
+    return 0;
+}
+//3
+#include <iostream>
+using namespace std;
+
+// Function to convert bool to T/F for display
+char tf(bool value) {
+    return value ? 'T' : 'F';
+}
+
+int main() {
+    bool p, q, r;
+    bool isValid = true;
+
+    cout << "p q r | p∨q (p∧q)→r q∧¬r ¬p | Premises True? Conclusion True?\n";
+    cout << "---------------------------------------------------------------\n";
+
+    for (int i = 0; i < 8; ++i) {
+
+        p = (i & 4) >> 2;
+        q = (i & 2) >> 1;
+        r = i & 1;
+
+      
+        bool p_or_q = p || q;
+        bool p_and_q = p && q;
+        bool implication = !p_and_q || r;      // (p ∧ q) → r
+        bool q_and_not_r = q && !r;            // q ∧ ¬r
+        bool not_p = !p;
+
+       
+        bool premises_true = p_or_q && implication && q_and_not_r;
+        bool conclusion_true = not_p;
+
+        
+        if (premises_true && !conclusion_true) {
+            isValid = false;
+        }
+
+    
+        cout << tf(p) << " " << tf(q) << " " << tf(r) << " |  "
+             << tf(p_or_q) << "      "
+             << tf(implication) << "      "
+             << tf(q_and_not_r) << "    "
+             << tf(not_p) << " |       "
+             << tf(premises_true) << "               "
+             << tf(conclusion_true) << "\n";
+    }
+
+    cout << "\nConclusion: The argument is " << (isValid ? "VALID." : "INVALID.") << endl;
+
+    return 0;
+}
+//4
+#include <iostream>
+using namespace std;
+
+
+char tf(bool val) {
+    return val ? 'T' : 'F';
+}
+
+int main() {
+    bool p, q, r;
+    bool valid = true;
+
+    cout << "p q r | p→q q→r p→r | Premises True? Conclusion True?\n";
+    cout << "---------------------------------------------------------\n";
+
+    for (int i = 0; i < 8; ++i) {
+       
+        p = (i & 4) >> 2; 
+        q = (i & 2) >> 1; 
+        r = i & 1;      
+
+        bool p_implies_q = !p || q;  
+        bool q_implies_r = !q || r; 
+        bool p_implies_r = !p || r;  
+        bool premises_true = p_implies_q && q_implies_r;
+        bool conclusion_true = p_implies_r;
+
+        if (premises_true && !conclusion_true) {
+            valid = false;
+        }
+
+        cout << tf(p) << " " << tf(q) << " " << tf(r) << " |  "
+             << tf(p_implies_q) << "    "
+             << tf(q_implies_r) << "    "
+             << tf(p_implies_r) << "   |       "
+             << tf(premises_true) << "               "
+             << tf(conclusion_true) << "\n";
+    }
+
+    cout << "\nConclusion: The argument is " << (valid ? "VALID." : "INVALID.") << endl;
+
+    return 0;
+}
